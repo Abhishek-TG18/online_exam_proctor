@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
 import {
   CheckCircle,
   XCircle,
@@ -20,7 +21,124 @@ export function Test() {
     id || ""
   );
 
-  if (hasError) {
+  const [exitAttempts, setExitAttempts] = useState(0);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const fullscreenButtonRef = useRef(null);
+
+  // Function to enter fullscreen
+  const enterFullscreen = () => {
+    const elem = document.documentElement;
+    try {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
+    } catch (error) {
+      console.error("Error entering fullscreen:", error);
+    }
+  };
+
+  // Function to check if we're in fullscreen mode
+  const checkFullscreen = () => {
+    return !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+  };
+
+  useEffect(() => {
+    // Enter fullscreen initially
+    enterFullscreen();
+    
+    // Function to handle exiting fullscreen
+    const handleFullscreenExit = () => {
+      if (!checkFullscreen()) {
+        setExitAttempts(prev => {
+          const newAttempts = prev + 1;
+          
+          if (newAttempts >= 3) {
+            setIsBlocked(true);
+            alert("You have exceeded the fullscreen exit limit. You are blocked from the test.");
+            return newAttempts;
+          }
+          
+          alert(`Warning: Please stay in fullscreen mode during the test. Attempts: ${newAttempts}/3`);
+          return newAttempts;
+        });
+      }
+    };
+
+    // Setup event listeners for fullscreen changes
+    document.addEventListener("fullscreenchange", handleFullscreenExit);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenExit);
+    document.addEventListener("mozfullscreenchange", handleFullscreenExit);
+    document.addEventListener("MSFullscreenChange", handleFullscreenExit);
+
+    // Disable copy and paste
+    const preventCopyPaste = (e) => {
+      e.preventDefault();
+      alert("Copy and paste actions are not allowed during this test.");
+    };
+
+    document.addEventListener("copy", preventCopyPaste);
+    document.addEventListener("paste", preventCopyPaste);
+    document.addEventListener("cut", preventCopyPaste);
+
+    // Add context menu prevention
+    const preventContextMenu = (e) => {
+      e.preventDefault();
+    };
+
+    document.addEventListener("contextmenu", preventContextMenu);
+
+    // Add keydown prevention for keyboard shortcuts
+    const preventKeyboardShortcuts = (e) => {
+      // Prevent Ctrl+C, Ctrl+V, Ctrl+X
+      if (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
+        e.preventDefault();
+        alert("Copy and paste actions are not allowed during this test.");
+      }
+    };
+
+    document.addEventListener("keydown", preventKeyboardShortcuts);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenExit);
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenExit);
+      document.removeEventListener("mozfullscreenchange", handleFullscreenExit);
+      document.removeEventListener("MSFullscreenChange", handleFullscreenExit);
+      document.removeEventListener("copy", preventCopyPaste);
+      document.removeEventListener("paste", preventCopyPaste);
+      document.removeEventListener("cut", preventCopyPaste);
+      document.removeEventListener("contextmenu", preventContextMenu);
+      document.removeEventListener("keydown", preventKeyboardShortcuts);
+    };
+  }, []);
+
+  // Monitor fullscreen status and re-enter if necessary
+  useEffect(() => {
+    if (isBlocked) return;
+
+    const checkAndEnterFullscreen = () => {
+      if (!checkFullscreen()) {
+        enterFullscreen();
+      }
+    };
+
+    // Check if user has exited fullscreen periodically
+    const intervalId = setInterval(checkAndEnterFullscreen, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [isBlocked]);
+
+  if (hasError || isBlocked) {
     return <ErrorHandler />;
   }
 
@@ -28,9 +146,13 @@ export function Test() {
     return <CodeEditorSkeleton />;
   }
 
+  const handleFullscreenButtonClick = () => {
+    enterFullscreen();
+  };
+
   return (
     <div>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 select-none">
         <Header userRole="Student" />
         <div className="flex justify-center items-center min-h-screen mt-20">
           <main className="container mx-auto px-4 py-8 min-h-screen">
@@ -40,6 +162,24 @@ export function Test() {
             <p className="text-xl sm:text-2xl font-semibold text-green-600 mb-8 text-center">
               {statusMessage}
             </p>
+            <p className="text-red-500 text-center font-semibold">
+              (⚠ Do not exit fullscreen mode. Exceeding 3 times will block you!)
+            </p>
+            <p className="text-red-500 text-center font-semibold">
+              Attempts: {exitAttempts}/3
+            </p>
+
+            {!checkFullscreen() && (
+              <div className="flex justify-center my-4">
+                <button
+                  ref={fullscreenButtonRef}
+                  onClick={handleFullscreenButtonClick}
+                  className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Return to Fullscreen Mode
+                </button>
+              </div>
+            )}
 
             <div className="flex flex-col sm:grid grid-cols-1 md:grid-cols-12 gap-8 mb-8">
               <div className="col-span-5 bg-white p-6 rounded-lg shadow-md flex justify-center my-8 sm:my-0">
