@@ -284,7 +284,7 @@ const ScheduleTest = () => {
                 </LocalizationProvider>
               </div>
 
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <input
                   id="hasChangeOfQuestion"
                   type="checkbox"
@@ -303,7 +303,7 @@ const ScheduleTest = () => {
                 >
                   Provide change of question
                 </label>
-              </div>
+              </div> */}
             </div>
 
             <button

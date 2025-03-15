@@ -28,7 +28,7 @@ export function AdminDashBoard() {
         <main className="container mx-auto px-4 py-8">
           <h1 className="mb-28 text-xl sm:text-4xl md:text-5xl text-center font-bold text-gray-800">
             <ReactTyped
-              strings={["Streamline Your Lab Assessments"]}
+              strings={["Streamline Your Assessments"]}
               typeSpeed={40}
               backSpeed={40}
               className="text-green-600"
@@ -38,7 +38,7 @@ export function AdminDashBoard() {
           <div className="grid gap-6 md:grid-cols-2">
             <Card title="Getting Started">
               <p className="mb-4 text-gray-600">
-                Our platform streamlines your programming lab assessments,
+                Our platform streamlines your programming assessments,
                 making it easier to evaluate student performance and manage
                 coursework efficiently:
               </p>

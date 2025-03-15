@@ -16,6 +16,7 @@ async function adminMiddleWare(req, res, next) {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.userId = decoded.userId;
 
+
     const admin = await Admin.findById(req.userId);
 
     if (!admin) {

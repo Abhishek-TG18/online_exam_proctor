@@ -201,13 +201,11 @@ export function Landing() {
               <div className="flex flex-col items-center space-y-8 text-center">
                 <div className="space-y-4">
                   <h1 className="text-2xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none animate-fadeIn text-green-600">
-                    Modernizing Laboratory Assessment
+                    Online Coding Platform
                   </h1>
                   <br />
                   <p className="mx-auto max-w-[700px] text-gray-500 text-sm md:text-xl animate-slideUp">
-                    Transforming traditional lab test systems with our
-                    comprehensive online platform to Enhance efficiency and
-                    accessibility in education.
+                  join our online coding platform to enhance your coding skills through interactive challenges and real-time problem-solving.
                   </p>
                 </div>
                 <button
@@ -232,11 +230,7 @@ export function Landing() {
             </h2>
             <div className="max-w-3xl mx-auto space-y-6 text-gray-500 text-sm md:text-lg text-justify">
               <p>
-                Our project aims to transform traditional lab test systems by
-                developing a comprehensive online platform. Utilizing JavaScript
-                for both front-end and back-end development, we provide a
-                robust, user-friendly interface that includes separate login
-                modes for faculty and students.
+              Our aim is to provide a dynamic and inclusive platform where learners can enhance their coding skills through hands-on challenges. We strive to foster a community of problem solvers, offering resources that promote continuous learning and growth. By providing real-time feedback and collaborative opportunities, we empower individuals to reach their full potential in the world of coding.
               </p>
               <p>
                 This modernization effort not only streamlines the assessment
@@ -297,22 +291,27 @@ export function Landing() {
               <div className="flex flex-col justify-center items-center sm:grid sm:grid-cols-3 gap-8 w-56 sm:w-full max-w-4xl">
                 {[
                   {
-                    name: "RANJAN N",
-                    branch: "CSE-AIML",
-                    usn: "1SI22CI064",
-                    github: "https://github.com/Ranjan-n",
-                  },
-                  {
-                    name: "VIKRAM R",
-                    branch: "CSE-AIML",
-                    usn: "1SI22CI063",
-                    github: "https://github.com/Vikram-0401",
-                  },
-                  {
-                    name: "AMOGH S",
+                    name: "Abhishek T G",
                     branch: "CSE",
-                    usn: "1SI22CS016",
-                    github: "https://github.com/AmoghS30",
+                    usn: "1SI22CS006",
+                   },
+                  {
+                    name: "Varshith ",
+                    branch: "CSE",
+                    usn: "1SI22CS128",
+                    
+                  },
+                  {
+                    name: "Vasudha",
+                    branch:"ISE",
+                    usn: "1SI22IS114",
+                    
+                  },
+                  {
+                    name: "Tajana",
+                    branch:"CSE",
+                    usn: "1SI22CS210",
+                    
                   },
                 ].map((member, index) => (
                   <div
