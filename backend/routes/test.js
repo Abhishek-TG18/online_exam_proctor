@@ -125,6 +125,8 @@ router.post(
   }
 );
 
+const axios = require('axios');
+
 router.post(
   "/:testId/submit",
   userMiddleWare,
@@ -184,6 +186,42 @@ router.post(
           isCheated: true,
           message: "Your typing pattern suggests possible copy-paste.",
         });
+      }
+
+      
+      const PLAGSCAN_API_KEY = "0a3e02ca4fd0af53e7f3a27f0507e579c16557501bfb4ddfbf2fee29b4c17dd8"; 
+
+      try {
+        const plagiarismResponse = await axios.post('https://api.plagscan.com/check', {
+          apiKey: PLAGSCAN_API_KEY,
+          content: code,
+          language: language
+        });
+
+        if (plagiarismResponse.data.plagiarism_score > 20) { // If plagiarism score is greater than 20%
+          if (existingResult) {
+            existingResult.codingScore = 0;
+            existingResult.isCheated = true;
+            await existingResult.save();
+          } else {
+            const result = new Result({
+              testId: req.test._id,
+              studentId,
+              codingScore: 0,
+              vivaScore: 0,
+              code,
+              isCheated: true,
+            });
+            await result.save();
+          }
+
+          return res.status(200).json({
+            isCheated: true,
+            message: `Plagiarism detected! Score: ${plagiarismResponse.data.plagiarism_score}%`,
+          });
+        }
+      } catch (plagError) {
+        console.error("Plagiarism API Error:", plagError.message);
       }
 
       const hiddenTestCases = question.hiddenTestCases;
@@ -270,6 +308,7 @@ router.post(
     }
   }
 );
+
 
 router.get(
   "/:testId/viva-questions",
